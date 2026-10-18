@@ -1,0 +1,8 @@
+_base_ = ['./ban_vit-b16-clip_mit-b0_512x512_40k_levircd.py']
+
+# pretrained = 'pretrain/RS5M_ViT-B-32.pth'  # noqa
+pretrained = '/home/debian/Workspace/change_adapter/pretained/RS5M_ViT-B-32.pth'
+
+model = dict(
+    pretrained=pretrained,
+    image_encoder=dict(patch_size=32))

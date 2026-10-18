@@ -1,0 +1,43 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.o
+*.a
+*.egg
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ===== IDE / OS =====
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+.claude/
+
+# ===== 数据集与实验产物 =====
+/data/
+/runs/
+/work_dirs/
+/logs/
+*.log
+*.log.json
+
+# ===== 模型权重 =====
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.engine
+checkpoints/
+checkpoint/
+pretrained_models/
+pretrained/
+
+# ===== 根目录实验图 =====
+/*.png
