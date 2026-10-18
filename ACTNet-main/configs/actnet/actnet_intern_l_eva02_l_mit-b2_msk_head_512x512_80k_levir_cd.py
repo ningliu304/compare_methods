@@ -3,10 +3,21 @@ _base_ = [
 ]
 
 # crop_size = (256, 256)
-pretrained_cnn = '/home/ubuntu/ACTNet/pretained/internimage_xl_22k_192to384.pth'
-pretrained_tf = '/home/ubuntu/ACTNet/pretained/' \
-                'eva02-large-p14_m38m-pre_in21k-medft_3rdparty_in1k-448px_20230505-150dc5ed.pth'
-checkpoint = '/home/ubuntu/ACTNet/pretained/mit_b2_20220624-66e8bf70.pth'
+import os
+
+import opencd
+
+# 预训练权重默认放在 ACTNet-main/pretrained/ 下；
+# 可用环境变量 ACTNET_PRETRAINED_DIR 指向其他目录
+_ACTNET_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(opencd.__file__)))
+pretrained_dir = os.environ.get(
+    'ACTNET_PRETRAINED_DIR', os.path.join(_ACTNET_ROOT, 'pretrained'))
+pretrained_cnn = os.path.join(
+    pretrained_dir, 'internimage_xl_22k_192to384.pth')
+pretrained_tf = os.path.join(
+    pretrained_dir,
+    'eva02-large-p14_m38m-pre_in21k-medft_3rdparty_in1k-448px_20230505-150dc5ed.pth')
+checkpoint = os.path.join(pretrained_dir, 'mit_b2_20220624-66e8bf70.pth')
 num_classes = 2
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 crop_size = (512, 512)
