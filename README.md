@@ -240,14 +240,14 @@ python BIT_CD-master/train_cd.py --dataset WUSU512 --out-dir runs/bit_cd
 ### 5.1 标准模型（8 个，统一 Trainer）
 
 ```bash
-python BIT_CD-master/train_cd.py        --dataset Evlab --out-dir runs/bit_cd
-python ChangeFormer-main/train_cd.py    --dataset Evlab --out-dir runs/changeformer
-python Tiny_model_4_CD-main/train_cd.py --dataset Evlab --out-dir runs/tinycd
-python Siam-NestedUNet-master/train_cd.py --dataset Evlab --out-dir runs/snunet
-python DSAMNet-main/train_cd.py         --dataset Evlab --out-dir runs/dsamnet
-python BCE-Net-main/train_cd.py         --dataset Evlab --out-dir runs/bcenet
-python ChangeViT-master/train_cd.py     --dataset Evlab --out-dir runs/changevit
-python ChangeMamba-master/train_cd.py   --dataset Evlab --out-dir runs/changemamba
+python BIT_CD-master/train_cd.py        --dataset Evlab --out-dir runs/bit_cd --batch-size 8 --num-workers 8
+python ChangeFormer-main/train_cd.py    --dataset Evlab --out-dir runs/changeformer --batch-size 8 --num-workers 8
+python Tiny_model_4_CD-main/train_cd.py --dataset Evlab --out-dir runs/tinycd --batch-size 8 --num-workers 8
+python Siam-NestedUNet-master/train_cd.py --dataset Evlab --out-dir runs/snunet --batch-size 8 --num-workers 8
+python DSAMNet-main/train_cd.py         --dataset Evlab --out-dir runs/dsamnet --batch-size 8 --num-workers 8
+python BCE-Net-main/train_cd.py         --dataset Evlab --out-dir runs/bcenet --batch-size 8 --num-workers 8
+python ChangeViT-master/train_cd.py     --dataset Evlab --out-dir runs/changevit --batch-size 8 --num-workers 8
+python ChangeMamba-master/train_cd.py   --dataset Evlab --out-dir runs/changemamba --batch-size 4 --num-workers 8
 ```
 （把 `--dataset Evlab` 换成 `HRSCD` / `WUSU512` 即切换数据集。）
 
