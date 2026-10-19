@@ -15,7 +15,9 @@ from common.vis import visualize_batch
 
 def _make_optimizer(cfg, params):
     if cfg.optim == "sgd":
-        return torch.optim.SGD(params, lr=cfg.lr, momentum=0.9, weight_decay=cfg.weight_decay)
+        return torch.optim.SGD(params, lr=cfg.lr, momentum=0.9,
+                               weight_decay=cfg.weight_decay,
+                               nesterov=getattr(cfg, "nesterov", False))
     if cfg.optim == "adam":
         return torch.optim.Adam(params, lr=cfg.lr, weight_decay=cfg.weight_decay)
     return torch.optim.AdamW(params, lr=cfg.lr, weight_decay=cfg.weight_decay)

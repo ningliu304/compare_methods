@@ -3,7 +3,7 @@
 本目录把 **11 个**开源变化检测（Change Detection, CD）模型统一到**同一数据、同一尺寸、
 同一训练轮数、同一随机种子、同一指标实现**下，用于公平对比与复现。
 
-模型：BIT_CD、ChangeFormer、TinyCD、Siam-NestedUNet(SNUNet)、DSAMNet、BCE-Net、CMCDNet、
+模型：BIT_CD、ChangeFormer、TinyCD、Siam-NestedUNet(SNUNet)、DSAMNet、SAM-CD、CMCDNet、
 ChangeViT、ChangeMamba、ACTNet、FAEWNet。（均为监督式方法）
 
 ---
@@ -18,18 +18,18 @@ ChangeViT、ChangeMamba、ACTNet、FAEWNet。（均为监督式方法）
 | **BIT** | 12.40 ᵃ | 2021, IEEE TGRS | ResNet 编码器 + Transformer 编/解码器（双时相语义 token）+ 特征差分 | 监督（二值） |
 | **SNUNet-CD** | 12.03 ᵇ | 2021, IEEE GRSL | 密集连接 Siamese NestedUNet + ECAM 集成通道注意力 + 混合损失 | 监督（二值） |
 | **DSAMNet** | 16.95 | 2021, IEEE TGRS | ResNet18 + CBAM 注意力 + 深度监督的度量（距离）模块 | 监督（二值） |
-| **BCE-Net** | 28.77 ᶜ | 2023, ISPRS J. P&RS | ResNet34 + DCNv2 变形卷积对齐 + 多任务（新/旧/迁移）分支 + 对比学习 | 监督（单时相历史底图 + 新影像） |
 | **ChangeFormer** | 41.03 ᵈ | 2022, IGARSS | 层次化 Transformer（Siamese）编码器 + MLP 解码器 | 监督（二值） |
 | **ChangeMamba** | 32.61 ᵉ | 2024, IEEE TGRS | VMamba(SSM/状态空间) 编码器 + 时空关系建模解码器（BCD/SCD/BDA 三框架） | 监督（二值） |
 | **ChangeViT** | 41.15 ᶠ | 2025, Pattern Recognition | 纯 ViT(DINOv2) 骨干 + detail-capture 细节捕获 + feature injector 特征注入 + 解码器 | 监督（二值） |
 | **CMCDNet** | 待统计 ᵍ | 2023, Int. J. Appl. Earth Obs. Geoinf. | 双流 CNN（ResNet50 光学 + EfficientNet-B2 SAR）+ 门控融合 + 跨模态自注意力 | 监督（跨模态） |
 | **FAEWNet** | 待统计 ᵍ | 2025, IEEE TGRS | SAM(ViT-L) 骨干 + LoRA(PEFT) + 分布感知傅里叶适配 + 边缘约束变形(SMSF) 时空融合 | 监督（二值） |
 | **ACTNet** | 待统计 ᵍ | 2026, Pattern Recognition | CNN-Transformer 基础模型适配：InternImage(DCNv3) + EVA02 ViT + MiT-B2 侧网络 + SFFM 空频融合 | 监督（二值） |
+| **SAM-CD** | 待统计 ᶜ | 2024, IEEE TGRS | FastSAM-x 冻结骨干 + 多尺度适配器 + 空间注意力 + 潜变量相似度约束 | 监督（二值） |
 
 > 参数量为**本实验实际配置下逐层统计**（含骨干），并已与论文/文献核对：
 > ᵃ BIT 常被引作 3.55M，但该值不可能含 ResNet18 骨干（其自身≈11.2M），本文按实测 **12.40M** 计；
 > ᵇ SNUNet-CD 官方主表为 **16 通道=3.0M**，本仓库硬编码 `n1=32`→**12.03M**（两者皆为已发表配置）；
-> ᶜ BCE-Net 为改造版双时相 `model_bcd.py`（原方法单时相，论文未给参数量）；
+> ᶜ SAM-CD 使用冻结的 FastSAM-x 骨干（约 68M，仅适配器/解码器可训练），参数量待统计；
 > ᵈ ChangeFormer 用 **embed_dim=256**（=原文，41.0M）；若用仓库默认 64 则约 29.8M；
 > ᵉ ChangeMamba 为 VSSM-**tiny** 配置；ᶠ ChangeViT 为 **small**(DINOv2 ViT-S) 配置（文献另有 32.1M 的记法，口径/配置不同）；
 > ᵍ CMCDNet / FAEWNet / ACTNet 基于 mmseg 1.x（CMCDNet 为 0.20），需各自独立环境才能构建，
@@ -43,15 +43,15 @@ ChangeViT、ChangeMamba、ACTNet、FAEWNet。（均为监督式方法）
 - DSAMNet —《A Deeply Supervised Attention Metric-Based Network ...》, TGRS 2021
 - ChangeFormer —《A Transformer-Based Siamese Network for Change Detection》, IGARSS 2022
 - TinyCD —《TinyCD: A (Not So) Deep Learning Model for Change Detection》, NCAA 2023
-- BCE-Net —《BCE-Net: Reliable Building Footprints Change Extraction ...》, ISPRS J. P&RS 2023
+- SAM-CD —《Adapting Segment Anything Model for Change Detection in HR Remote Sensing Images》, TGRS 2024（DOI:10.1109/TGRS.2024.3368168）
 - CMCDNet —《Cross-modal change detection flood extraction based on CNN》, IJAEOG 2023
 - ChangeMamba —《ChangeMamba: Remote Sensing Change Detection With Spatiotemporal State Space Model》, TGRS 2024（arXiv:2404.03425）
 - ChangeViT —《ChangeViT: Unleashing Plain Vision Transformers for Change Detection》, Pattern Recognition 2025（DOI:10.1016/j.patcog.2025.112539）
 - FAEWNet —《SAM-Based Building Change Detection With Distribution-Aware Fourier Adaptation and Edge-Constrained Warping》, TGRS 2025（DOI:10.1109/TGRS.2025.3629110）
 - ACTNet —《ACTNet: Adapting CNN-Transformer-based foundation model for RS change detection》, Pattern Recognition 2026
 
-> 说明：为适配本实验的双时相二值变化设定，`BCE-Net` 使用改造版 `model_bcd.py`（原方法为单时相
-> 「历史底图 + 新影像」语义变化）；`CMCDNet` 原为光学-SAR 跨模态，这里把 A/B 分别喂给 opt/sar 两分支。
+> 说明：`CMCDNet` 原为光学-SAR 跨模态，这里把 A/B 分别喂给 opt/sar 两分支。
+> `BCE-Net` 未纳入主实验：其原版依赖历史建筑先验与多任务分支，无法在 EVLab 土地利用图上做仅接口层的适配。
 
 ---
 
@@ -83,7 +83,7 @@ E:\论文\对比实验\
 ├── Tiny_model_4_CD-main/{adapter.py, train_cd.py, ...}
 ├── Siam-NestedUNet-master/{adapter.py, train_cd.py, ...}
 ├── DSAMNet-main/{adapter.py, train_cd.py, ...}
-├── BCE-Net-main/{model_bcd.py, adapter.py, train_cd.py, ...}
+├── SAM-CD-main/{adapter.py, train_cd.py, models/, utils/, ...}
 ├── CMCDNet-main/
 │   ├── my_scripts/bcd_rgb/ # MMSeg 配置（新增）
 │   ├── test_bcd.py         # 统一评估入口（新增）
@@ -169,7 +169,7 @@ python BIT_CD-master/train_cd.py --dataset WUSU512 --out-dir runs/bit_cd
 | 模型 | 默认 `norm` | 等价处理 |
 |---|---|---|
 | BIT_CD / ChangeFormer / DSAMNet | `minus_one_one` | `[-1, 1]` |
-| Siam-NestedUNet / BCE-Net / CMCDNet | `zero_one` | `[0, 1]` |
+| Siam-NestedUNet / SAM-CD / CMCDNet | `zero_one` | `[0, 1]` |
 | TinyCD | `imagenet` | ImageNet mean/std |
 | ChangeViT | `imagenet` | ImageNet mean/std（BGR 顺序，匹配其 cv2 读图） |
 | ChangeMamba | `imagenet` | ImageNet mean/std（0~255 尺度，与其 imutils 等价） |
@@ -185,7 +185,7 @@ python BIT_CD-master/train_cd.py --dataset WUSU512 --out-dir runs/bit_cd
 |---|---|---|
 | BIT_CD / ChangeFormer / Siam-NestedUNet | `[B,2,H,W]` logits | `argmax` |
 | TinyCD | `[B,1,H,W]` sigmoid 概率 | `> 0.5` |
-| BCE-Net | `[B,1,H,W]` logits | `sigmoid > 0.5` |
+| SAM-CD | `[B,1,H,W]` logits | `sigmoid > 0.5` |
 | DSAMNet | 距离图 `dist` | `dist > 1.0`（原设计） |
 | ChangeViT | `[B,1,H,W]` sigmoid 概率 | `> 0.5` |
 | CMCDNet / ACTNet / FAEWNet / ChangeMamba | `[B,2,H,W]` logits | `argmax` |
@@ -197,10 +197,10 @@ python BIT_CD-master/train_cd.py --dataset WUSU512 --out-dir runs/bit_cd
 - **通用**：Python 3.8+、PyTorch、torchvision、numpy、Pillow、tqdm。
 - **BIT_CD / ChangeFormer**：额外需 `einops`。
 - **TinyCD**：首次运行会下载 EfficientNet-B4 预训练权重。
-- **BCE-Net**：
-  - 需要 `torchvision` 的 resnet34 预训练权重（首次自动下载）。
-  - **DCNv2 为可选**：若已编译（`cd BCE-Net-main/DCNv2 && python setup.py build_ext --inplace`）
-    则使用原可变形卷积；未编译会自动退化为普通卷积，仍可训练。
+- **SAM-CD**：
+  - 依赖 `ultralytics==8.0.120`、`scikit-image`、`tensorboardX`。
+  - 必须按 `SAM-CD-main/models/FastSAM/README.md` 修改已安装的 ultralytics 源码，否则拿不到多尺度特征。
+  - FastSAM-x.pt 放在 `SAM-CD-main/`，或用环境变量 `SAMCD_WEIGHTS` 指定；建议单独 conda 环境。
 - **CMCDNet**：
   - 依赖 **mmcv-full 1.3~1.4**（自定义编译）+ `timm` + `prettytable`，否则 `test_bcd.py` 会明确报错。
 - **ACTNet**：
@@ -221,14 +221,15 @@ python BIT_CD-master/train_cd.py --dataset WUSU512 --out-dir runs/bit_cd
     （需 CUDA≥11.6、nvcc、ninja、einops），否则 import 会报 `selective_scan_cuda` 缺失。
   - 可选：设环境变量 `CHANGEMAMBA_PRETRAINED=/path/to/vssm_tiny_ckpt.pth` 加载 VMamba 预训练编码器。
 
-> **版本冲突提示（重要）**：`CMCDNet`、`ACTNet`、`FAEWNet`、`ChangeMamba` 对底层库版本要求互不兼容，
-> 建议**各自建独立 conda 环境**，不要与其余 7 个模型共用同一个 env：
+> **版本冲突提示（重要）**：`CMCDNet`、`ACTNet`、`FAEWNet`、`ChangeMamba`、`SAM-CD` 对底层库版本要求互不兼容，
+> 建议**各自建独立 conda 环境**，不要与其余模型共用同一个 env：
 > - **CMCDNet** 需 `mmcv-full 1.3~1.5`（mmseg 0.20 fork）；
 > - **ACTNet** 需 `mmcv 2.0~2.1` + `mmseg 1.x` + 编译 DCNv3/DCNv4 算子；
 > - **FAEWNet** 需 `mmcv 2.0~2.1` + `mmseg 1.x` + `mmpretrain`/`mmdet`/`peft`；
-> - **ChangeMamba** 依赖 `triton`（**无官方 Windows 版，需 Linux/WSL**）+ 编译 `kernels/selective_scan`。
+> - **ChangeMamba** 依赖 `triton`（**无官方 Windows 版，需 Linux/WSL**）+ 编译 `kernels/selective_scan`；
+> - **SAM-CD** 需 `ultralytics==8.0.120` 并修改其源码。
 >
-> 其余 7 个模型（BIT / ChangeFormer / TinyCD / SNUNet / DSAMNet / BCE-Net / ChangeViT）
+> 其余 6 个模型（BIT / ChangeFormer / TinyCD / SNUNet / DSAMNet / ChangeViT）
 > 可在同一环境直接运行（已验证）。
 
 ---
@@ -243,16 +244,17 @@ python BIT_CD-master/train_cd.py --dataset WUSU512 --out-dir runs/bit_cd
 python BIT_CD-master/train_cd.py        --dataset Evlab --out-dir runs/bit_cd --batch-size 8 --num-workers 8
 python ChangeFormer-main/train_cd.py    --dataset Evlab --out-dir runs/changeformer --batch-size 8 --num-workers 8
 python Tiny_model_4_CD-main/train_cd.py --dataset Evlab --out-dir runs/tinycd --batch-size 8 --num-workers 8
-python Siam-NestedUNet-master/train_cd.py --dataset Evlab --out-dir runs/snunet --batch-size 8 --num-workers 8
+python Siam-NestedUNet-master/train_cd.py --dataset Evlab --out-dir runs/snunet --batch-size 4 --num-workers 8
 python DSAMNet-main/train_cd.py         --dataset Evlab --out-dir runs/dsamnet --batch-size 8 --num-workers 8
-python BCE-Net-main/train_cd.py         --dataset Evlab --out-dir runs/bcenet --batch-size 8 --num-workers 8
+python SAM-CD-main/train_cd.py          --dataset Evlab --out-dir runs/samcd --num-workers 8
 python ChangeViT-master/train_cd.py     --dataset Evlab --out-dir runs/changevit --batch-size 8 --num-workers 8
 python ChangeMamba-master/train_cd.py   --dataset Evlab --out-dir runs/changemamba --batch-size 4 --num-workers 8
 ```
 （把 `--dataset Evlab` 换成 `HRSCD` / `WUSU512` 即切换数据集。）
 
 > ChangeViT 需先在 `ChangeViT-master/checkpoint/` 放好 DINOv2 权重；ChangeMamba 需先编译
-> `kernels/selective_scan`（详见 §4）。两者其余用法与上面完全一致，最优模型按验证集变化类 F1 保存。
+> `kernels/selective_scan`；SAM-CD 需安装并补丁 ultralytics==8.0.120 并准备 FastSAM-x.pt（详见 §4）。
+> 其余用法与上面完全一致，最优模型按验证集变化类 F1 保存。
 
 常用参数（所有模型通用）：
 
@@ -411,20 +413,22 @@ runs/bit_cd/
 
 ## 8. 常见问题
 
-- **显存不足（OOM）**：调小 `--batch-size`（BCE-Net 默认 4，其余默认 8/16）。
+- **显存不足（OOM）**：调小 `--batch-size`（SAM-CD / ChangeMamba 默认 4，其余默认 8/16）。
 - **怎么换数据集**：往 `data/` 下放新文件夹（结构同 §2），运行时加 `--dataset <名称>` 即可；
   `--list-datasets` 可列出已有数据集。MMSeg 系用 `BCD_DATA_ROOT=data/<名称>` 切换。
 - **找不到数据**：确认 `--dataset <名称>` 对应的 `data/<名称>/train/A` 存在（子目录名固定为 `A/B/label`）；
   也可用 `--root <目录>` 直接指定，或用 `--list-datasets` 排查。
-- **BCE-Net 提示 DCNv2**：属正常，未编译 DCNv2 时会自动用普通卷积兜底，不影响运行。
+- **SAM-CD 报 FastSAM/ultralytics 错误**：需安装 `ultralytics==8.0.120` 并按
+  `SAM-CD-main/models/FastSAM/README.md` 修改其源码；`FastSAM-x.pt` 放 `SAM-CD-main/` 或设 `SAMCD_WEIGHTS`。
 - **CMCDNet 报 mmseg/mmcv 错误**：需先按仓库文档编译安装匹配的 mmcv-full 1.3~1.4。
 - **ACTNet 报 DCNv3/DCNv4 错误**：需先编译 `ops_dcnv3` 与 `DCNv4_op`；并确认 mmcv 2.x、mmseg 1.x 版本匹配。
-- **ACTNet 找不到预训练权重**：配置里 internimage_xl / eva02-large / mit_b2 的路径为原作者的绝对路径，需改成你的本地路径。
+- **ACTNet 找不到预训练权重**：把 internimage_xl / eva02-large / mit_b2 放到
+  `ACTNet-main/pretrained/`，或设 `ACTNET_PRETRAINED_DIR` 指向实际目录。
 - **FAEWNet 报 mmseg/mmcv 错误**：需 `mmseg>=1.0.0rc6` + `mmcv 2.0~2.1` + `mmpretrain`/`mmdet`/`peft`；SAM ViT-L 权重会自动下载。
 - **ChangeViT 找不到 ViT 权重**：需把 `dinov2_vits14_pretrain.pth`（small）或
   `deit_tiny_patch16_224-a1311bcf.pth`（tiny）放到 `ChangeViT-master/checkpoint/`。
 - **ChangeMamba 报 selective_scan_cuda 缺失**：需先编译 `kernels/selective_scan`；不加载
   VMamba 预训练权重也能跑（随机初始化），但精度会低很多，建议设 `CHANGEMAMBA_PRETRAINED`。
-- **最优模型怎么选**：统一按**验证集变化类 F1**（不是均值 mF1）。8 个 Trainer 模型在训练中自动存 `best.pth`；
-  MMSeg 系（CMCDNet/ACTNet）每 5 epoch 存权重，由 `test_bcd.py`/`test_cd.py` 传目录时按 F1 挑选。
+- **最优模型怎么选**：统一按**验证集变化类 F1**（不是均值 mF1）。所有模型训练中按 F1 覆盖保存
+  `best_<数据集>.pth`；MMSeg 系（CMCDNet/ACTNet/FAEWNet）同样在训练 Hook 中保存，测试脚本直接复用。
 - **想要绝对可复现**：固定 `--seed`，并尽量在同一硬件/同一 cuDNN 环境下运行。

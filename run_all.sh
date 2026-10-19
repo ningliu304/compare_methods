@@ -28,9 +28,9 @@ TRAINER_MODELS=(
   "Tiny_model_4_CD-main:tinycd"
   "Siam-NestedUNet-master:snunet"
   "DSAMNet-main:dsamnet"
-  "BCE-Net-main:bcenet"
   "ChangeViT-master:changevit"
   "ChangeMamba-master:changemamba"
+  "SAM-CD-main:samcd"
 )
 
 echo "============================================================"

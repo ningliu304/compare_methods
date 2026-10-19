@@ -39,6 +39,7 @@ class CDConfig:
     lr: float = 1e-4
     weight_decay: float = 0.0
     optim: str = "adamw"          # adam | adamw | sgd
+    nesterov: bool = False        # 仅 SGD 生效
     scheduler: str = "cosine"     # cosine | step | poly | linear | none
     seed: int = 42
     n_class: int = 2
@@ -106,6 +107,7 @@ def parse_args(argv: List[str] = None, defaults: dict = None) -> CDConfig:
     p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--weight-decay", type=float, default=0.0)
     p.add_argument("--optim", default="adamw", choices=["adam", "adamw", "sgd"])
+    p.add_argument("--nesterov", action="store_true", help="SGD 使用 Nesterov 动量")
     p.add_argument("--scheduler", default="cosine", choices=["cosine", "step", "poly", "linear", "none"])
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--n-class", type=int, default=2)
@@ -153,6 +155,7 @@ def parse_args(argv: List[str] = None, defaults: dict = None) -> CDConfig:
         lr=args.lr,
         weight_decay=args.weight_decay,
         optim=args.optim,
+        nesterov=args.nesterov,
         scheduler=args.scheduler,
         seed=args.seed,
         n_class=args.n_class,
